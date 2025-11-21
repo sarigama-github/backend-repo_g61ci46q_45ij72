@@ -11,8 +11,9 @@ Model name is converted to lowercase for the collection name:
 - BlogPost -> "blogs" collection
 """
 
-from pydantic import BaseModel, Field
-from typing import Optional
+from pydantic import BaseModel, Field, EmailStr
+from typing import Optional, List
+from datetime import datetime
 
 # Example schemas (replace with your own):
 
@@ -22,7 +23,7 @@ class User(BaseModel):
     Collection name: "user" (lowercase of class name)
     """
     name: str = Field(..., description="Full name")
-    email: str = Field(..., description="Email address")
+    email: EmailStr = Field(..., description="Email address")
     address: str = Field(..., description="Address")
     age: Optional[int] = Field(None, ge=0, le=120, description="Age in years")
     is_active: bool = Field(True, description="Whether user is active")
@@ -38,8 +39,34 @@ class Product(BaseModel):
     category: str = Field(..., description="Product category")
     in_stock: bool = Field(True, description="Whether product is in stock")
 
-# Add your own schemas here:
-# --------------------------------------------------
+# Cleaning Services App Schemas
+
+class Booking(BaseModel):
+    """Bookings collection schema. Collection: "booking""" 
+    name: str = Field(..., description="Customer full name")
+    email: EmailStr = Field(..., description="Customer email")
+    phone: str = Field(..., description="Customer phone number")
+    address: str = Field(..., description="Service address")
+    service_type: str = Field(..., description="Requested service type")
+    date: str = Field(..., description="Preferred date (ISO string or human text)")
+    time: str = Field(..., description="Preferred time window")
+    notes: Optional[str] = Field(None, description="Additional notes")
+    source: Optional[str] = Field("website", description="Lead source")
+
+class ContactMessage(BaseModel):
+    """Contact messages from contact form. Collection: "contactmessage""" 
+    name: str = Field(..., description="Sender name")
+    email: EmailStr = Field(..., description="Sender email")
+    message: str = Field(..., description="Message body")
+    phone: Optional[str] = Field(None, description="Optional phone")
+    subject: Optional[str] = Field(None, description="Subject")
+
+class Testimonial(BaseModel):
+    """Testimonials left by customers. Collection: "testimonial"""
+    name: str = Field(..., description="Customer name")
+    rating: int = Field(..., ge=1, le=5, description="Star rating 1-5")
+    comment: str = Field(..., description="Testimonial text")
+    city: Optional[str] = Field(None, description="City or area")
 
 # Note: The Flames database viewer will automatically:
 # 1. Read these schemas from GET /schema endpoint
